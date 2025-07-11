@@ -1,30 +1,29 @@
+# onlinecourse/admin.py
+
 from django.contrib import admin
-# <HINT> Import any new Models here
-from .models import Course, Lesson, Instructor, Learner
+# Impor Enrollment bersama dengan model lainnya dari models.py
+from .models import Course, Lesson, Instructor, Learner, Enrollment, Question, Choice, Submission
 
-# <HINT> Register QuestionInline and ChoiceInline classes here
+# Add this to onlinecourse/admin.py
+class ChoiceInline(admin.TabularInline):
+    model = Choice
+    extra = 4 # Number of empty forms to display
 
+class QuestionInline(admin.StackedInline): # Or admin.TabularInline
+    model = Question
+    extra = 1
+    show_change_link = True # Allow clicking to edit question directly
 
-class LessonInline(admin.StackedInline):
-    model = Lesson
-    extra = 5
-
-
-# Register your models here.
+# Modify CourseAdmin in onlinecourse/admin.py
 class CourseAdmin(admin.ModelAdmin):
-    inlines = [LessonInline]
-    list_display = ('name', 'pub_date')
-    list_filter = ['pub_date']
+    list_display = ('name', 'pub_date', 'instructor')
+    list_filter = ('pub_date', 'instructor')
     search_fields = ['name', 'description']
+    inlines = [QuestionInline] # Add this line to include questions within course admin
 
-
-class LessonAdmin(admin.ModelAdmin):
-    list_display = ['title']
-
-
-# <HINT> Register Question and Choice models here
-
-admin.site.register(Course, CourseAdmin)
-admin.site.register(Lesson, LessonAdmin)
-admin.site.register(Instructor)
-admin.site.register(Learner)
+# Add this to onlinecourse/admin.py
+admin.site.register(Course, CourseAdmin) # Register Course with CourseAdmin
+admin.site.register(Enrollment) # Sekarang Enrollment sudah diimpor dan bisa didaftarkan
+admin.site.register(Question) # Register Question
+admin.site.register(Choice) # Register Choice
+admin.site.register(Submission) # Register Submission

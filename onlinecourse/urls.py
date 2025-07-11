@@ -1,24 +1,21 @@
-from django.urls import path
-from django.conf import settings
-from django.conf.urls.static import static
-from . import views
+# myproject/urls.py (atau nama_proyek_utama_anda/urls.py)
 
-app_name = 'onlinecourse'
+from django.contrib import admin
+from django.urls import path, include # Pastikan 'include' sudah diimpor
+# Import views dari onlinecourse untuk routing langsung jika diperlukan
+from django.conf import settings # Import settings untuk serve media files
+from django.conf.urls.static import static # Import static untuk serve media files
+
 urlpatterns = [
-    # route is a string contains a URL pattern
-    # view refers to the view function
-    # name the URL
-    path(route='', view=views.CourseListView.as_view(), name='index'),
-    path('registration/', views.registration_request, name='registration'),
-    path('login/', views.login_request, name='login'),
-    path('logout/', views.logout_request, name='logout'),
-    # ex: /onlinecourse/5/
-    path('<int:pk>/', views.CourseDetailView.as_view(), name='course_details'),
-    # ex: /enroll/5/
-    path('<int:course_id>/enroll/', views.enroll, name='enroll'),
+    path('admin/', admin.site.urls),
+    # Sertakan URL dari aplikasi onlinecourse
+    # Anda bisa memilih path prefix yang Anda inginkan, misalnya 'onlinecourse/'
+    # Atau jika Anda ingin aplikasi onlinecourse menjadi homepage, Anda bisa menggunakan ''
+    path('onlinecourse/', include('onlinecourse.urls')), # Contoh: akan diakses melalui http://127.0.0.1:8000/onlinecourse/
+    # Atau, jika Anda ingin halaman utama adalah dari onlinecourse:
+    # path('', include('onlinecourse.urls')),
+]
 
-    # <HINT> Create a route for submit view
-
-    # <HINT> Create a route for show_exam_result view
-
- ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Tambahkan ini untuk melayani media files (seperti gambar kursus) dalam mode development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
